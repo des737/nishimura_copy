@@ -9,7 +9,7 @@ def synthesis_PEProsody(device, lab_file, context_embedding, prosody_embedding,
                         acoustic_out_scaler, vocoder_model,
                         need_mel=False):
     ids = [Path(lab_file).name.replace("-feats.npy", "")]
-
+    print(ids)
     (
         current_txt_emb, history_txt_embs, hist_emb_len, history_speakers, history_emotions
     ) = context_embedding
@@ -129,6 +129,8 @@ def synthesis_PEProsody(device, lab_file, context_embedding, prosody_embedding,
     )
 
     mel_post = output[1]
+    print("melpost:", mel_post)
+    print("mel.cpu().data.numpy()", mel_post[0].cpu().data.numpy())
     attentions = output[-1]  # fastspeech2wContextswPEProsody系のみ対応
     # TODO: segの時はattentionの長さが一定でないので単純な計算ができない．
     # なので，扱わないことにする.

@@ -1,8 +1,9 @@
 # General settings.
-spk: "LINE_wContextwPEProsody_7"
+spk: "LINE_test"
+#"LINE_wContextwPEProsody_7"
 
 # exp tag(for managing experiments)
-tag: "LINE_wContextwPEProsody_192_SM_woSSL_seg_Attn_Meltarget_beta_0_01"
+tag: "LINE_test"
 
 sample_rate: 22050
 
@@ -21,16 +22,23 @@ cudnn_deterministic: false
 ###########################################################
 
 # PLEASE CHANGE THE PATH BASED ON YOUR ENVIRONMENT
-wav_root: "../../../dataset/out_LINE_woITAKO/LINE/wav/22050"
-lab_root: "../../../dataset/out_LINE_woITAKO/fullcontext"
-dialogue_info: "../../../dataset/out_LINE_woITAKO/dialogue_info.txt"
+wav_root: "/home/sarulab/eiji_iimori/documents/dataset/dataset/test/wav"
+#"/home/sarulab/eiji_iimori/documents/dataset/dataset/out_JSUT_NICT_LINE/JSUT_NICT_LINE/wav/22050"
+lab_root: "/home/sarulab/eiji_iimori/documents/dataset/dataset/test/textgrid"
+#"/home/sarulab/eiji_iimori/documents/dataset/dataset/out_JSUT_NICT_LINE/textgrid"
+dialogue_info: "/home/sarulab/eiji_iimori/documents/dataset/dataset/test/dialogue.txt"
+#"/home/sarulab/eiji_iimori/documents/dataset/dataset/out_JSUT_NICT_LINE_wo_Teacher/dialogue_info.txt"
 
 n_jobs: 8
 
-train_num:
-deveval_num:
-dev_num:
-eval_num:
+train_num: 55
+#24500
+deveval_num: 20
+#515
+dev_num: 15
+#415
+eval_num: 5
+#100
 
 ###########################################################
 #                FEATURE EXTRACTION SETTING               #
@@ -45,10 +53,10 @@ clip: 0.00001
 log_base: "natural"
 pitch_phoneme_averaging: 1
 energy_phoneme_averaging: 1
-accent_info: 1
+accent_info: 0
 # if you want to use multi-speaker, fill below.
 # example: "JSUT,NICT"
-speakers:
+speakers: "JSUT,NICT,MStudent,FStudent,Teacher"
 
 # for with Contexts
 BERT_weight: "colorfulscoop/sbert-base-ja"
@@ -67,14 +75,18 @@ pretrained_checkpoints:
 ## そうではなく, pitch, energy or mel を利用したい場合は以下を埋める
 ## pitch, energy: mel_mode=0, mel: mel_mode=1
 ## labかtextgridは片方を埋めればよい
-input_wav_paths: "../../../dataset/out_LINE_woITAKO/LINE/wav/22050,../../../dataset/out_LINE_MStudent/LINE_MStudent/wav/22050,../../../dataset/out_LINE_FStudent/LINE_FStudent/wav/22050"
-input_lab_paths: "../../../dataset/out_LINE_woITAKO/fullcontext,../../../dataset/out_LINE_MStudent/fullcontext,../../../dataset/out_LINE_FStudent/fullcontext"
-input_textgrid_paths:
+input_wav_paths: "/home/sarulab/eiji_iimori/documents/dataset/dataset/test/wav"
+#"/home/sarulab/eiji_iimori/documents/dataset/dataset/out_JSUT_NICT_LINE/JSUT_NICT_LINE/wav/22050"
+#"../../../dataset/out_LINE_woITAKO/LINE/wav/22050,../../../dataset/out_LINE_MStudent/LINE_MStudent/wav/22050,../../../dataset/out_LINE_FStudent/LINE_FStudent/wav/22050"
+input_lab_paths: 
+#"../../../dataset/out_LINE_woITAKO/fullcontext,../../../dataset/out_LINE_MStudent/fullcontext,../../../dataset/out_LINE_FStudent/fullcontext"
+input_textgrid_paths: "/home/sarulab/eiji_iimori/documents/dataset/dataset/test/textgrid"
+#"/home/sarulab/eiji_iimori/documents/dataset/dataset/out_JSUT_NICT_LINE/textgrid"
 # emb_speakers:
 # SSL_name: "wav2vec2"
 # SSL_weight: "jonatasgrosman/wav2vec2-large-xlsr-53-japanese"
 # SSL_sample_rate: 16000
-emb_speakers: "Teacher,MStudent,FStudent"
+emb_speakers: "JSUT,Teacher,MStudent,FStudent"
 SSL_name:
 SSL_weight:
 SSL_sample_rate:
@@ -91,7 +103,7 @@ vocoder_model: hifigan
 # acoustic_modelで利用したいvocoderのconfigやweightへのpathを指定してください.
 # 具体的に利用する重みは,vocoder_eval_checkpointになります.
 vocoder_config: "conf/train_hifigan/model/hifigan.yaml"
-vocoder_weight_base_path: "../fastspeech2/exp/LINE_3_sr22050_LINE_6/hifigan"
+vocoder_weight_base_path: "/home/sarulab/eiji_iimori/documents/nishimura_copy/recipes/fastspeech2wContexts/exp/LINE_test_sr22050_LINE_test/hifigan"
 
 ### fastspeech2  ###
 # max_train_steps: 200000 → nepochs: 256 s.t. batch_size*group_size = 32, JSUT.
@@ -117,5 +129,7 @@ reverse: false
 # 音声生成にかかる時間を短縮する場合、小さな値（5など）に設定してください
 num_eval_utts: -1
 
-acoustic_eval_checkpoint: latest.pth
-vocoder_eval_checkpoint: latest.pth
+acoustic_eval_checkpoint: best_loss.pth
+#latest.pth
+vocoder_eval_checkpoint: best_loss.pth
+#latest.pth

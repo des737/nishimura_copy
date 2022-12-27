@@ -45,6 +45,21 @@ mkdir -p $expdir
 mkdir -p $expdir/conf
 cp ./config.yaml $expdir
 
+if [ ${stage} -le 0 ] && [ ${stop_stage} -ge 0 ]; then
+    echo "stage 0: Data preparation"
+    echo "train/dev/eval split"
+    mkdir -p data
+    if [ $accent_info -ge 1 ]; then
+        find $lab_root -name "*.lab" -exec basename {} .lab \; | shuf > data/utt_list.txt
+    else
+        find $lab_root -name "*.TextGrid" -exec basename {} .TextGrid \; | shuf > data/utt_list.txt
+    fi
+    head -n $train_num data/utt_list.txt > data/train.list
+    tail -$deveval_num data/utt_list.txt > data/deveval.list
+    head -n $dev_num data/deveval.list > data/dev.list
+    tail -n $eval_num data/deveval.list > data/eval.list
+    rm -f data/deveval.list
+fi
 
 if [ ${stage} -le 1 ] && [ ${stop_stage} -ge 1 ]; then
     echo "stage 1: Feature generation for fastspeech2"
@@ -168,7 +183,7 @@ if [ ${stage} -le 4 ] && [ ${stop_stage} -ge 4 ]; then
     if [ -e $expdir/${acoustic_model} ] && [ ${overwrite} -le 0 ]; then
         echo "exp files are already exists. you cant run this exp."
         echo "if you want to overwrite, add --overwrite 1."
-        exit 1
+        exit 0
     fi
 
     # save config

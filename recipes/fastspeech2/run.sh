@@ -15,6 +15,7 @@ COMMON_ROOT=../common
 . $COMMON_ROOT/yaml_parser.sh || exit 1;
 
 eval $(parse_yaml "./config.yaml" "")
+speakers=({"JSUT": 0, "NICT": 1, "Teacher": 2, "FStudent": 3, "MStudent": 4})
 
 train_set="train"
 dev_set="dev"

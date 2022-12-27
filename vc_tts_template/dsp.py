@@ -316,9 +316,9 @@ def logmelspectrogram(
         n_fft = _next_power_of_2(win_length)
 
     magnitude = librosa.stft(
-        y, n_fft=n_fft, hop_length=hop_length, win_length=win_length, window="hanning"
+        y, n_fft=n_fft, hop_length=hop_length, win_length=win_length, window="hann"
     )
-
+    #hanning から han に変更
     fmin = 0 if fmin is None else fmin
     fmax = sr // 2 if fmax is None else fmax
 

@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 parse_yaml() {
    local prefix=$2

@@ -16,11 +16,15 @@ class MultiSpeakerStandardScaler():
             self.multi_speaker = False
         else:
             self.multi_speaker = True
-
+        #self.speakers = {'JSUT': 0, 'NICT': 1, 'Teacher': 2, 'FStudent': 3, 'MStudent': 4}
+        # speakers
+        # 一時的措置
+        print()
+        print("multispeaker: ", self.multi_speaker)
+        print(speakers)
         self.scalers_dict = {
             spk: StandardScaler() for spk in speakers
         }
-        self.speakers = speakers
 
     def partial_fit(self, X, speaker=""):
         if speaker not in self.speakers:
@@ -34,6 +38,11 @@ class MultiSpeakerStandardScaler():
         return y
 
     def inverse_transform(self, X, speaker=""):
+        # print(self.speakers)
+        # print(speaker)
+        #self.speakers = {'JSUT': 0, 'NICT': 1, 'Teacher': 2, 'FStudent': 3, 'MStudent': 4}
+        # speakers
+        # 一時的措置
         if speaker not in self.speakers:
             raise KeyError("存在する話者かどうかを確認して下さい")
         y = self.scalers_dict[speaker].inverse_transform(X)
@@ -103,8 +112,10 @@ if __name__ == "__main__":
             c = np.load(in_dir / f"{utt_id.strip()}-feats.npy")
             if len(c.shape) == 1:
                 c = c.reshape(-1, 1)
-
+            # print(args.speakers_list)
             speaker = utt_id.split("_")[0] if args.speakers_list is not None else ""
+            #speaker = {"JSUT": 0, "NICT": 1, "Teacher": 2, "FStudent": 3, "MStudent": 4}
+            print(speaker)
             scaler.partial_fit(
                 c, speaker
             )

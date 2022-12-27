@@ -1,0 +1,3 @@
+stage 4: Training fastspeech2
+exp files are already exists. you cant run this exp.
+if you want to overwrite, add --overwrite 1.

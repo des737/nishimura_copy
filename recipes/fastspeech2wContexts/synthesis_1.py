@@ -1,3 +1,11 @@
+from vc_tts_template.utils import load_utt_list, optional_tqdm
+from vc_tts_template.fastspeech2wContexts.gen_PEProsody import \
+    synthesis_PEProsody
+from vc_tts_template.fastspeech2wContexts.gen import synthesis
+from vc_tts_template.fastspeech2wContexts.collate_fn_PEProsody import \
+    get_peprosody_embs
+from vc_tts_template.fastspeech2wContexts.collate_fn import (
+    get_embs, make_dialogue_dict)
 import shutil
 import sys
 from pathlib import Path
@@ -17,14 +25,6 @@ import librosa
 
 sys.path.append("../..")
 from recipes.common.fit_scaler import MultiSpeakerStandardScaler  # noqa: F401
-from vc_tts_template.fastspeech2wContexts.collate_fn import (
-    get_embs, make_dialogue_dict)
-from vc_tts_template.fastspeech2wContexts.collate_fn_PEProsody import \
-    get_peprosody_embs
-from vc_tts_template.fastspeech2wContexts.gen import synthesis
-from vc_tts_template.fastspeech2wContexts.gen_PEProsody import \
-    synthesis_PEProsody
-from vc_tts_template.utils import load_utt_list, optional_tqdm
 
 
 @hydra.main(config_path="conf/synthesis", config_name="config")
@@ -150,7 +150,6 @@ def my_app(config: DictConfig) -> None:
     for lab_file, context_embedding, prosody_embedding in optional_tqdm(config.tqdm, desc="Utterance")(
         zip(lab_files, context_embeddings, prosody_embeddings)
     ):
-        print(acoustic_config.netG.speakers)
         wav, attentions = _synthesis(  # type: ignore
             device, lab_file, context_embedding, prosody_embedding,
             acoustic_config.netG.speakers, acoustic_config.netG.emotions,
@@ -177,7 +176,8 @@ def my_app(config: DictConfig) -> None:
                 if text_attn is not None:
                     attention_data["text"][hist_prosody_emb_len].append(text_attn.contiguous().view(-1).cpu().numpy())
                 if speech_attn is not None:
-                    attention_data["speech"][hist_prosody_emb_len].append(speech_attn.contiguous().view(-1).cpu().numpy())
+                    attention_data["speech"][hist_prosody_emb_len].append(
+                        speech_attn.contiguous().view(-1).cpu().numpy())
 
         wav = np.clip(wav, -1.0, 1.0)
 
@@ -323,17 +323,21 @@ def my_app(config: DictConfig) -> None:
                     if text_attn is not None:
                         if "text" not in attention_data_real.keys():
                             attention_data_real["text"] = {}
-                        attention_data_real["text"][hist_prosody_emb_len] = [text_attn.contiguous().view(-1).cpu().numpy()]
+                        attention_data_real["text"][hist_prosody_emb_len] = [
+                            text_attn.contiguous().view(-1).cpu().numpy()]
                     if speech_attn is not None:
                         if "speech" not in attention_data_real.keys():
                             attention_data_real["speech"] = {}
-                        attention_data_real["speech"][hist_prosody_emb_len] = [speech_attn.contiguous().view(-1).cpu().numpy()]
+                        attention_data_real["speech"][hist_prosody_emb_len] = [
+                            speech_attn.contiguous().view(-1).cpu().numpy()]
                 else:
                     attention_len_num_real[hist_prosody_emb_len] += 1
                     if text_attn is not None:
-                        attention_data_real["text"][hist_prosody_emb_len].append(text_attn.contiguous().view(-1).cpu().numpy())
+                        attention_data_real["text"][hist_prosody_emb_len].append(
+                            text_attn.contiguous().view(-1).cpu().numpy())
                     if speech_attn is not None:
-                        attention_data_real["speech"][hist_prosody_emb_len].append(speech_attn.contiguous().view(-1).cpu().numpy())
+                        attention_data_real["speech"][hist_prosody_emb_len].append(
+                            speech_attn.contiguous().view(-1).cpu().numpy())
 
             # 3. 新しいembeddingの用意
             # 上書き保存という形でコピーしたprosody embがたまったdirに保存
